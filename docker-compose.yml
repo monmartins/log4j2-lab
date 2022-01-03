@@ -1,0 +1,44 @@
+version: '3.1'
+
+
+services:
+
+  jndi:
+    container_name: jndi
+    image: ubuntu:jndi
+    healthcheck:
+        test: ["CMD", "ls", "-la", "/"]
+        interval: 5s
+        timeout: 10s
+        retries: 5
+    ports:
+      - 9001:9001
+      - 1389:1389
+
+  vulnerable-app:
+    container_name: vulnerable-app
+    image: vulnerable-app-log4j2
+    healthcheck:
+        test: ["CMD", "ls", "-la", "/"]
+        interval: 5s
+        timeout: 10s
+        retries: 5
+    depends_on:
+      jndi:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+
+  attacker:
+    container_name: attacker
+    image: alpine:curl 
+    depends_on:
+      vulnerable-app:
+        condition: service_healthy
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./command.sh:/opt/command.sh
+    command: 
+      - "sh"
+      - "/opt/command.sh"

@@ -1,0 +1,4 @@
+#docker build . -t alpine:curl 
+from alpine:latest
+
+RUN apk --no-cache --update add curl
